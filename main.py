@@ -1,17 +1,22 @@
 import os
 
+import openpyxl
 from kivy import Config
 from kivy.app import App
 from kivy.core.window import Window
 from kivy.lang import Builder
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ListProperty
 from kivy.uix.screenmanager import ScreenManager, SlideTransition
 from kivy.utils import get_color_from_hex
+import xlrd
+
+from utils import XlsRowIterator
 
 
 class ExcelImageMatcher(ScreenManager):
     image_folder = StringProperty('')
     excel_file = StringProperty('')
+    headers = ListProperty()
 
     def __init__(self, *args, **kwargs):
         super(ExcelImageMatcher, self).__init__(*args, **kwargs)
@@ -37,6 +42,19 @@ class ExcelImageMatcher(ScreenManager):
                 self.switch_screen(screen='summary_screen', direction='right')
         except IndexError:
             pass
+
+    def parse_headers(self, *args, **kwargs):
+        file_name, file_ext = os.path.splitext(self.excel_file)
+        if file_ext.lower().endswith('.xlsx'):
+            wb = openpyxl.load_workbook(self.excel_file)
+            sheet = wb.active
+            rows = sheet.iter_rows()
+        elif file_ext.lower().endswith('.xls'):
+            wb = xlrd.open_workbook(filename=self.excel_file)
+            sheet = wb.sheet_by_index(0)
+            rows = XlsRowIterator(sheet)
+        header_row = rows.next()
+        self.headers = map(lambda x: getattr(x, 'value', ''), header_row)
 
     def switch_screen(self, screen, direction='left'):
         self.transition = SlideTransition(direction=direction)

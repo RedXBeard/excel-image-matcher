@@ -126,7 +126,7 @@
                     on_press: root.switch_screen('file_chooser', 'right')
                 Button:
                     text: '[b]Confirm Start Matching[/b]'
-                    on_press: root.switch_screen('column_matcher', 'left')
+                    on_press: root.parse_headers()
 
     Screen:
         id: 'column_matcher'

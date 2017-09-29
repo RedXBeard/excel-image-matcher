@@ -3,6 +3,24 @@ import os
 from subprocess import Popen, PIPE
 
 
+class XlsRowIterator():
+    def __init__(self, sheet):
+        self.sheet = sheet
+        self.row_index = 0
+        self.max_index = sheet.nrows
+
+    def __iter__(self):
+        return self
+
+    def next(self):
+        if self.row_index < self.max_index:
+            row = self.sheet.row(self.row_index)
+            self.row_index += 1
+            return row
+        else:
+            raise StopIteration
+
+
 def run_syscall(cmd):
     """
     run_syscall; handle sys calls this function used as shortcut.
