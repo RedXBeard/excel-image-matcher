@@ -1,0 +1,116 @@
+#:import home_folder utils.HOME_FOLDER
+#:import get_color_from_hex kivy.utils.get_color_from_hex
+
+<GridLayout>
+    padding: 15, 15, 15, 15
+
+<Button>
+    bold: True
+
+<Label>
+	background_normal: ""
+	background_down: ""
+	background_disabled_down: ""
+	background_disabled_normal: ""
+	background_color: get_color_from_hex('E2DDD5')
+	border: 16,16,16,16
+	markup: True
+	color: get_color_from_hex('000000')
+
+
+<ExcelImageMatcher>
+    Screen:
+        id: 'file_chooser'
+        name: 'file_chooser'
+
+        GridLayout:
+            cols: 1
+            rows: 1
+            Button:
+                text: 'Select Excel File'
+                on_press: root.switch_screen(screen='files_screen')
+
+    Screen:
+        id: 'files_screen'
+        name: 'files_screen'
+
+        BoxLayout:
+            orientation: 'vertical'
+
+            FileChooser:
+                id: fcfile
+                path: home_folder
+                on_submit: root.file_chosen(fcfile.selection)
+                FileChooserListLayout
+
+    Screen:
+        id: 'folder_chooser'
+        name: 'folder_chooser'
+
+        GridLayout:
+            cols: 1
+            rows: 1
+            Button:
+                text: 'Select Image Folder'
+                on_press: root.switch_screen(screen='images_screen', direction='left')
+
+    Screen:
+        id: 'images_screen'
+        name: 'images_screen'
+
+        BoxLayout:
+            orientation: 'vertical'
+
+            FileChooser:
+                id: fcfolder
+                path: home_folder
+                on_submit: root.folder_chosen(fcfolder.selection)
+                FileChooserListLayout
+
+    Screen:
+        id: 'summary_screen'
+        name: 'summary_screen'
+
+        GridLayout:
+            cols: 1
+            rows: 3
+            BoxLayout:
+                orientation: 'horizontal'
+                Label:
+                    size_hint_x: None
+                    width: sp(150)
+                    text_size: self.width, None
+                    valign: 'middle'
+                    text: '[b]Excel Path[/b]'
+                Label:
+                    text_size: self.width, None
+                    text: root.excel_file
+            BoxLayout:
+                orientation: 'horizontal'
+                Label:
+                    size_hint_x: None
+                    width: sp(150)
+                    text_size: self.width, None
+                    valign: 'middle'
+                    text: '[b]Image Folder Path[/b]'
+                Label:
+                    text_size: self.width, None
+                    text: root.image_folder
+            BoxLayout:
+                orientation: 'horizontal'
+                Button:
+                    text: '[b]< Back to Selection[/b]'
+                    on_press: root.switch_screen('file_chooser', 'right')
+                Button:
+                    text: '[b]Confirm Start Matching[/b]'
+                    on_press: root.switch_screen('column_matcher', 'left')
+
+    Screen:
+        id: 'column_matcher'
+        name: 'column_matcher'
+
+        GridLayout:
+            cols: 1
+            rows: 1
+            Label:
+                text: 'Congratulations'
