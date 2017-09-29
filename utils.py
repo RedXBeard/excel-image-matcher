@@ -3,7 +3,7 @@ import os
 from subprocess import Popen, PIPE
 
 
-class XlsRowIterator():
+class XlsRowIterator:
     def __init__(self, sheet):
         self.sheet = sheet
         self.row_index = 0
@@ -21,12 +21,12 @@ class XlsRowIterator():
             raise StopIteration
 
 
-def run_syscall(cmd):
+def run_syscall(command):
     """
     run_syscall; handle sys calls this function used as shortcut.
     ::cmd: String, shell command is expected.
     """
-    p = Popen(cmd, shell=True, stdout=PIPE, stderr=PIPE)
+    p = Popen(command, shell=True, stdout=PIPE, stderr=PIPE)
     out, err = p.communicate()
     return out.rstrip()
 

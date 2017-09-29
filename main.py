@@ -1,6 +1,7 @@
 import os
 
 import openpyxl
+import xlrd
 from kivy import Config
 from kivy.app import App
 from kivy.core.window import Window
@@ -8,7 +9,6 @@ from kivy.lang import Builder
 from kivy.properties import StringProperty, ListProperty
 from kivy.uix.screenmanager import ScreenManager, SlideTransition
 from kivy.utils import get_color_from_hex
-import xlrd
 
 from utils import XlsRowIterator
 
@@ -18,12 +18,12 @@ class ExcelImageMatcher(ScreenManager):
     excel_file = StringProperty('')
     headers = ListProperty()
 
-    def __init__(self, *args, **kwargs):
-        super(ExcelImageMatcher, self).__init__(*args, **kwargs)
+    def __init__(self):
+        super(ExcelImageMatcher, self).__init__()
         self.image_folder = ''
         self.excel_file = ''
 
-    def file_chosen(self, *args, **kwargs):
+    def file_chosen(self, *args):
         try:
             path = args[0][0]
             if os.path.isfile(path):
@@ -43,8 +43,9 @@ class ExcelImageMatcher(ScreenManager):
         except IndexError:
             pass
 
-    def parse_headers(self, *args, **kwargs):
+    def parse_headers(self):
         file_name, file_ext = os.path.splitext(self.excel_file)
+        rows = None
         if file_ext.lower().endswith('.xlsx'):
             wb = openpyxl.load_workbook(self.excel_file)
             sheet = wb.active
@@ -53,8 +54,8 @@ class ExcelImageMatcher(ScreenManager):
             wb = xlrd.open_workbook(filename=self.excel_file)
             sheet = wb.sheet_by_index(0)
             rows = XlsRowIterator(sheet)
-        header_row = rows.next()
-        self.headers = map(lambda x: getattr(x, 'value', ''), header_row)
+        if rows:
+            self.headers = map(lambda x: getattr(x, 'value', ''), rows.next())
 
     def switch_screen(self, screen, direction='left'):
         self.transition = SlideTransition(direction=direction)
