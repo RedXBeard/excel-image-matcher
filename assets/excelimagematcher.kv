@@ -3,13 +3,35 @@
 
 <GridLayout>
     padding: 15, 15, 15, 15
+    spacing: 10, 10
 
 <Button>
+    canvas.before:
+        Color:
+            rgba: get_color_from_hex('FFCC00')
+        Rectangle:
+            pos: self.pos[0], self.pos[1]+8/2
+            size: self.size[0], self.size[1]-8
+        Rectangle:
+            pos: self.pos[0]+8/2, self.pos[1]
+            size: self.size[0]-8, self.size[1]
+        Ellipse:
+            size: 8, 8
+            pos: self.pos[0], self.pos[1]
+        Ellipse:
+            size: 8, 8
+            pos: self.pos[0], self.pos[1]+self.height-8
+        Ellipse:
+            size: 8, 8
+            pos: self.pos[0]+self.width-8, self.pos[1]
+        Ellipse:
+            size: 8, 8
+            pos: self.pos[0]+self.width-8, self.pos[1]+self.height-8
     bold: True
 
 <Label>
-	background_normal: ""
-	background_down: ""
+    background_normal: 'assets/images/trans.png'
+    background_down: 'assets/images/trans.png'
 	background_disabled_down: ""
 	background_disabled_normal: ""
 	background_color: get_color_from_hex('E2DDD5')
@@ -96,8 +118,9 @@
                 Label:
                     text_size: self.width, None
                     text: root.image_folder
-            BoxLayout:
-                orientation: 'horizontal'
+            GridLayout:
+                cols: 2
+                rows: 1
                 Button:
                     text: '[b]< Back to Selection[/b]'
                     on_press: root.switch_screen('file_chooser', 'right')
