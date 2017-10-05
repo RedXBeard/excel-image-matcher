@@ -1,9 +1,48 @@
 #:import home_folder utils.HOME_FOLDER
 #:import get_color_from_hex kivy.utils.get_color_from_hex
+#:import ListAdapter kivy.adapters.listadapter.ListAdapter
+#:import Factory kivy.factory.Factory
 
-<GridLayout>
-    padding: 15, 15, 15, 15
-    spacing: 10, 10
+<HeaderItem>
+    cols: 2
+    rows: 1
+    size_hint_y: None
+    height: '50px'
+    padding: 5, 5, 5, 5
+    spacing: 5, 5
+
+    checkbox: checkbox
+
+    CustomButton:
+        canvas.before:
+            Color:
+                rgba: get_color_from_hex('404248')
+            Rectangle:
+                pos: self.pos[0], self.pos[1]+8/2
+                size: self.size[0], self.size[1]-8
+            Rectangle:
+                pos: self.pos[0]+8/2, self.pos[1]
+                size: self.size[0]-8, self.size[1]
+            Ellipse:
+                size: 8, 8
+                pos: self.pos[0], self.pos[1]
+            Ellipse:
+                size: 8, 8
+                pos: self.pos[0], self.pos[1]+self.height-8
+            Ellipse:
+                size: 8, 8
+                pos: self.pos[0]+self.width-8, self.pos[1]
+            Ellipse:
+                size: 8, 8
+                pos: self.pos[0]+self.width-8, self.pos[1]+self.height-8
+        id: checkbox
+        size_hint_x: None
+        width: '50px'
+        on_press: root.pressed_but()
+    Label:
+        text: root.text
+        text_size: self.width, None
+        valign: 'middle'
 
 <Button>
     canvas.before:
@@ -41,6 +80,7 @@
 
 
 <ExcelImageMatcher>
+    history: history
     Screen:
         id: 'file_chooser'
         name: 'file_chooser'
@@ -48,8 +88,12 @@
         GridLayout:
             cols: 1
             rows: 1
+            padding: 15, 15, 15, 15
+            spacing: 10, 10
             Button:
                 text: 'Select Excel File'
+                size_hint_y: None
+                height: '100px'
                 on_press: root.switch_screen(screen='files_screen')
 
     Screen:
@@ -72,8 +116,12 @@
         GridLayout:
             cols: 1
             rows: 1
+            padding: 15, 15, 15, 15
+            spacing: 10, 10
             Button:
                 text: 'Select Image Folder'
+                size_hint_y: None
+                height: '100px'
                 on_press: root.switch_screen(screen='images_screen', direction='left')
 
     Screen:
@@ -96,6 +144,8 @@
         GridLayout:
             cols: 1
             rows: 3
+            padding: 15, 15, 15, 15
+            spacing: 10, 10
             BoxLayout:
                 orientation: 'horizontal'
                 Label:
@@ -121,11 +171,17 @@
             GridLayout:
                 cols: 2
                 rows: 1
+                padding: 15, 15, 15, 15
+                spacing: 10, 10
                 Button:
                     text: '[b]< Back to Selection[/b]'
+                    size_hint_y: None
+                    height: '100px'
                     on_press: root.switch_screen('file_chooser', 'right')
                 Button:
                     text: '[b]Confirm Start Matching[/b]'
+                    size_hint_y: None
+                    height: '100px'
                     on_press: root.parse_headers()
 
     Screen:
@@ -134,6 +190,76 @@
 
         GridLayout:
             cols: 1
-            rows: 1
-            Label:
-                text: 'Congratulations'
+            rows: 2
+            padding: 15, 15, 15, 15
+            spacing: 10, 10
+            GridLayout
+                cols: 3
+                rows: 2
+                padding: 15, 15, 15, 15
+                spacing: 10, 10
+                Label:
+                    text: 'Barcode Column'
+                    bold: True
+                    size_hint_y: None
+                    height: '50px'
+                Label:
+                    text: 'Base Column'
+                    bold: True
+                    size_hint_y: None
+                    height: '50px'
+                Label:
+                    text: 'Version Column'
+                    bold: True
+                    size_hint_y: None
+                    height: '50px'
+                ListView:
+                    name: 'barcode'
+                    adapter: ListAdapter(data=root.headers, cls=Factory.HeaderItem, args_converter=root.headers_to_items)
+                ListView:
+                    name: 'base'
+                    adapter: ListAdapter(data=root.headers, cls=Factory.HeaderItem, args_converter=root.headers_to_items)
+                ListView:
+                    name: 'versions'
+                    adapter: ListAdapter(data=root.headers, cls=Factory.HeaderItem, args_converter=root.headers_to_items)
+
+            Button:
+                text: 'Start...'
+                size_hint_y: None
+                height: '100px'
+                on_press: root.start_matching()
+
+    Screen:
+        id: 'processing'
+        name: 'processing'
+
+        GridLayout:
+            cols: 1
+            rows: 2
+            padding: 15, 15, 15, 15
+            spacing: 10, 10
+
+            TextInput:
+                id: history
+                hint_text: 'Starting...'
+                multiline: True
+                disabled: True
+                background_color: 1, 1, 1, 1
+                background_disabled_active: ""
+                background_disabled_normal: ""
+                background_normal: ""
+                background_active: ""
+
+            Button:
+                text: 'Done'
+                size_hint_y: None
+                height: '100px'
+                on_press: root.congrats()
+
+
+    Screen:
+        id: 'congrats'
+        name: 'congrats'
+
+        Label:
+            text: 'Congrats'

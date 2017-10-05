@@ -48,6 +48,25 @@ def set_color(obj, color):
         pass
 
 
+def find_parent(cur_class, target_class):
+    """find wanted widget from selected or current one"""
+    req_class = cur_class
+    if type(target_class) in [unicode, str]:
+        target_class_name = target_class
+    else:
+        target_class_name = str(target_class().__class__).split('.')[1].replace("'>", "")
+    while True:
+        cls = str(req_class.__class__).split('.')[1].replace("'>", "")
+        if cls == target_class_name:
+            break
+        elif cls == 'core':
+            req_class = None
+            break
+
+        req_class = req_class.parent
+    return req_class
+
+
 PATH_SEPERATOR = '\\' if os.path.realpath(__file__).find('\\') != -1 else '/'
 
 if PATH_SEPERATOR == '/':
